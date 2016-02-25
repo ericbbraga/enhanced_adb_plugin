@@ -1,8 +1,8 @@
 <idea-plugin version="2">
   <id>br.com.braga</id>
-  <name>Plugin display name here</name>
+  <name>Enhanced Adb</name>
   <version>1.0</version>
-  <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+  <vendor email="ericbraga25@gmail.com" url="http://www.yourcompany.com"></vendor>
 
   <description><![CDATA[
       Enter short description for your plugin here.<br>
@@ -19,6 +19,7 @@
   <idea-version since-build="141.0"/>
 
   <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.lang</depends>
   <depends>org.jetbrains.android</depends>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
@@ -30,12 +31,12 @@
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
       <toolWindow anchor="left" canCloseContents="true" id="Adb Plus"
-                  factoryClass="br.com.braga.adb.AdbDrawerViewer" secondary="true" />
+                  factoryClass="br.com.braga.adb.ui.AdbWindowFactory" secondary="true" />
   </extensions>
 
   <actions>
     <!-- Add your actions here -->
-      <action id="br.com.braga.adb.AdbDevicesAction" class="br.com.braga.adb.AdbDevicesAction" text="AdbDevices"
+      <action id="br.com.braga.adb.actions.AdbDevicesAction" class="br.com.braga.adb.actions.AdbDevicesAction" text="AdbDevices"
               description="List All Devices using Adb">
           <add-to-group group-id="ToolsMenu" anchor="last"/>
       </action>
