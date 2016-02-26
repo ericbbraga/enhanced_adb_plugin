@@ -1,36 +1,44 @@
 package br.com.braga.adb.ui.window;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 
 public class ActivityWindowDialog extends JDialog {
     private JPanel contentPane;
-    private JButton buttonOK;
-    private JButton buttonCancel;
+    private JButton sendButton;
+    private JButton cancelButton;
+    private JTable extraTable;
+    private JList flagList;
+    private JTextField textField1;
+    private JButton button3;
+    private JButton button4;
+    private JTextField textField2;
+    private JTextField textField3;
+    private JButton button5;
+    private JPanel panelMain;
 
     public ActivityWindowDialog() {
         setContentPane(contentPane);
         setModal(true);
         setResizable(false);
-        setSize(new Dimension(350, 200));
+        setSize(458, 650);
 
         setLocationRelativeTo(null);
-        getRootPane().setDefaultButton(buttonOK);
+        getRootPane().setDefaultButton(sendButton);
 
-        buttonOK.addActionListener(new ActionListener() {
+        sendButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onOK();
             }
         });
 
-        buttonCancel.addActionListener(new ActionListener() {
+        cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onCancel();
             }
         });
 
-// call onCancel() when cross is clicked
+        // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -38,7 +46,7 @@ public class ActivityWindowDialog extends JDialog {
             }
         });
 
-// call onCancel() on ESCAPE
+        // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onCancel();
@@ -47,12 +55,12 @@ public class ActivityWindowDialog extends JDialog {
     }
 
     private void onOK() {
-// add your code here
+        // add your code here
         dispose();
     }
 
     private void onCancel() {
-// add your code here if necessary
+        // add your code here if necessary
         dispose();
     }
 
