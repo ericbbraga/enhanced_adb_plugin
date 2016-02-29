@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Created by ericbraga on 23/02/16.
  */
-public class AdbWindowPanel extends SimpleToolWindowPanel implements ActionListener{
+public class AdbWindowPanel extends SimpleToolWindowPanel implements ActionListener, AndroidDebugBridge.IDeviceChangeListener {
 
     private JPanel panel1;
 
@@ -32,6 +32,7 @@ public class AdbWindowPanel extends SimpleToolWindowPanel implements ActionListe
     private List<IDevice> devices;
 
     private PopupMenuFactory popUpFactory;
+    private final AndroidDebugBridge bridge;
 
     public AdbWindowPanel(Project project) {
         super(true, true);
@@ -43,7 +44,7 @@ public class AdbWindowPanel extends SimpleToolWindowPanel implements ActionListe
         AdbTableModel model = new AdbTableModel(devices);
         table1.setModel(model);
 
-        popUpFactory = new PopupMenuFactory();
+        popUpFactory = new PopupMenuFactory( project );
 
         table1.addMouseListener(new MouseAdapter() {
             @Override
@@ -54,6 +55,9 @@ public class AdbWindowPanel extends SimpleToolWindowPanel implements ActionListe
                 }
             }
         });
+
+        bridge = AndroidSdkUtils.getDebugBridge(project);
+        bridge.addDeviceChangeListener(this);
     }
 
     private void showMenuPopup(MouseEvent e) {
@@ -63,24 +67,30 @@ public class AdbWindowPanel extends SimpleToolWindowPanel implements ActionListe
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         if (e.getActionCommand().equals("button")) {
             Messages.showDialog("ok", "Document Text", new String[] {"OK"}, -1, null);
         }
     }
 
     public void updateDevices() {
-
-        AndroidDebugBridge bridge = AndroidSdkUtils.getDebugBridge(project);
         if (bridge != null) {
             devices.clear();
             devices.addAll( Arrays.asList(bridge.getDevices()) );
         }
-
-        updateTable();
     }
 
-    private void updateTable() {
-        table1.updateUI();
+    @Override
+    public void deviceConnected(IDevice iDevice) {
+        updateDevices();
+    }
+
+    @Override
+    public void deviceDisconnected(IDevice iDevice) {
+        updateDevices();
+    }
+
+    @Override
+    public void deviceChanged(IDevice iDevice, int i) {
+        updateDevices();
     }
 }
