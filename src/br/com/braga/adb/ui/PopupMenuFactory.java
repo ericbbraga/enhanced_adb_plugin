@@ -2,6 +2,7 @@ package br.com.braga.adb.ui;
 
 import br.com.braga.adb.ui.window.menus.ActivityMenuItem;
 import br.com.braga.adb.ui.window.menus.BroadcastMenuItem;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 
 import javax.swing.*;
@@ -15,6 +16,12 @@ public class PopupMenuFactory {
     private List<String> popUpStringItems;
 
     private final String RESOURCE_ICONS_FOLDER = "/icons";
+
+    private Project project;
+
+    public PopupMenuFactory(Project project) {
+        this.project = project;
+    }
 
     public JPopupMenu createJPopupMenu() {
         JPopupMenu popup = new JPopupMenu();
@@ -35,8 +42,8 @@ public class PopupMenuFactory {
     private JMenuItem startAndroidComponentMenu() {
 
         JMenuItem item = new JMenu("Start");
-        item.add(new ActivityMenuItem());
-        item.add(new BroadcastMenuItem());
+        item.add(new ActivityMenuItem( project ));
+        item.add(new BroadcastMenuItem( project ));
         item.add(new JMenuItem("Service", getResourceIcon("service.png")));
 
         return item;
