@@ -1,4 +1,4 @@
-package br.com.braga.adb;
+package br.com.braga.adb.actions;
 
 import com.android.ddmlib.*;
 import com.intellij.openapi.actionSystem.AnAction;
