@@ -30,8 +30,6 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
-      <toolWindow anchor="left" canCloseContents="true" id="Adb Plus"
-                  factoryClass="br.com.braga.adb.ui.AdbWindowFactory" secondary="true" />
   </extensions>
 
   <actions>

@@ -1,5 +1,6 @@
 package br.com.braga.adb.actions;
 
+import br.com.braga.adb.ui.command.IntentWidowCommand;
 import com.android.ddmlib.*;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -16,26 +17,31 @@ public class AdbDevicesAction extends AnAction {
     public void actionPerformed(AnActionEvent anActionEvent) {
 
         final Project project = anActionEvent.getData(PlatformDataKeys.PROJECT);
+        new IntentWidowCommand(project).execCommand();
+
+       /* final Project project = anActionEvent.getData(PlatformDataKeys.PROJECT);
         AndroidDebugBridge bridge = AndroidSdkUtils.getDebugBridge(project);
-        IDevice[] devices = bridge.getDevices();
+        if (bridge != null) {
+            IDevice[] devices = bridge.getDevices();
 
-        File adb = AndroidSdkUtils.getAdb(project);
-        String path = adb.getAbsolutePath();
+            File adb = AndroidSdkUtils.getAdb(project);
+            String path = adb.getAbsolutePath();
 
-        if (devices.length > 0) {
-            try {
-                devices[0].executeShellCommand("getprop", new AdbDevicesReceiver());
+            if (devices.length > 0) {
+                try {
+                    devices[0].executeShellCommand("getprop", new AdbDevicesReceiver());
 
-            } catch (TimeoutException e) {
-                e.printStackTrace();
-            } catch (AdbCommandRejectedException e) {
-                e.printStackTrace();
-            } catch (ShellCommandUnresponsiveException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+                } catch (TimeoutException e) {
+                    e.printStackTrace();
+                } catch (AdbCommandRejectedException e) {
+                    e.printStackTrace();
+                } catch (ShellCommandUnresponsiveException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        }
+        }*/
     }
 
     private class AdbDevicesReceiver extends MultiLineReceiver {

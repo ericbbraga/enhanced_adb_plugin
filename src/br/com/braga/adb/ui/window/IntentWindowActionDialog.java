@@ -2,20 +2,27 @@ package br.com.braga.adb.ui.window;
 
 import br.com.braga.adb.model.ElementChoose;
 import br.com.braga.adb.model.IntentType;
+import br.com.braga.adb.ui.adapter.AdbComboModel;
 import br.com.braga.adb.ui.adapter.IntentTypeModel;
 import br.com.braga.adb.ui.command.WindowStrategy;
 import br.com.braga.adb.ui.command.WindowListActionBroadcastCommand;
 import br.com.braga.adb.ui.command.WindowListActionCommand;
 import br.com.braga.adb.ui.command.WindowListCategoryCommand;
+import com.android.ddmlib.AndroidDebugBridge;
+import com.android.ddmlib.IDevice;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import org.jetbrains.android.sdk.AndroidSdkUtils;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class IntentWindowActionDialog extends DialogWrapper {
+public class IntentWindowActionDialog extends DialogWrapper implements AndroidDebugBridge.IDeviceChangeListener {
     private final Project project;
     private JPanel contentPane;
     private JButton sendButton;
@@ -30,13 +37,23 @@ public class IntentWindowActionDialog extends DialogWrapper {
     private JButton button5;
     private JPanel panelMain;
     private JComboBox typeIntentCombobox;
+    private JComboBox deviceCombobox;
     private ElementChoose actionChoose;
     private ElementChoose categoryChoose;
+
+    private List<IDevice> devices;
+    private final AndroidDebugBridge bridge;
 
 
     public IntentWindowActionDialog(Project project) {
         super(project);
         this.project = project;
+
+        devices = new ArrayList<>();
+        bridge = AndroidSdkUtils.getDebugBridge(project);
+        bridge.addDeviceChangeListener(this);
+
+        updateDevices();
         init();
     }
 
@@ -85,6 +102,7 @@ public class IntentWindowActionDialog extends DialogWrapper {
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         typeIntentCombobox.setModel(new IntentTypeModel());
+        deviceCombobox.setModel(new AdbComboModel(devices));
     }
 
 
@@ -99,6 +117,9 @@ public class IntentWindowActionDialog extends DialogWrapper {
                 openWindowListBroadcastAction();
                 break;
 
+            case SERVICE:
+                break;
+
             default:
                 break;
         }
@@ -109,24 +130,11 @@ public class IntentWindowActionDialog extends DialogWrapper {
             @Override
             public void handleReturn(ElementChoose element) {
                 actionChoose = element;
-                actionTextField.setText(element.getValue());
+                actionTextField.setText(element.getPresentationName());
             }
         };
 
         new WindowListActionCommand(project, strategy).execCommand();
-    }
-
-    private void openWindowListCategory() {
-
-        WindowStrategy strategy = new WindowStrategy() {
-            @Override
-            public void handleReturn(ElementChoose element) {
-                categoryChoose = element;
-                categoryTextField.setText(element.getValue());
-            }
-        };
-
-        new WindowListCategoryCommand(project, strategy).execCommand();
     }
 
     private void openWindowListBroadcastAction() {
@@ -135,11 +143,24 @@ public class IntentWindowActionDialog extends DialogWrapper {
             @Override
             public void handleReturn(ElementChoose element) {
                 actionChoose = element;
-                actionTextField.setText(element.getValue());
+                actionTextField.setText(element.getPresentationName());
             }
         };
 
         new WindowListActionBroadcastCommand(project, strategy).execCommand();
+    }
+
+    private void openWindowListCategory() {
+
+        WindowStrategy strategy = new WindowStrategy() {
+            @Override
+            public void handleReturn(ElementChoose element) {
+                categoryChoose = element;
+                categoryTextField.setText(element.getPresentationName());
+            }
+        };
+
+        new WindowListCategoryCommand(project, strategy).execCommand();
     }
 
     private void onOK() {
@@ -156,5 +177,27 @@ public class IntentWindowActionDialog extends DialogWrapper {
     @Override
     protected JComponent createCenterPanel() {
         return contentPane;
+    }
+
+    public void updateDevices() {
+        if (bridge != null) {
+            devices.clear();
+            devices.addAll( Arrays.asList(bridge.getDevices()) );
+        }
+    }
+
+    @Override
+    public void deviceConnected(IDevice iDevice) {
+        updateDevices();
+    }
+
+    @Override
+    public void deviceDisconnected(IDevice iDevice) {
+        updateDevices();
+    }
+
+    @Override
+    public void deviceChanged(IDevice iDevice, int i) {
+        updateDevices();
     }
 }

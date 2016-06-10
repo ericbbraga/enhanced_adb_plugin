@@ -1,5 +1,7 @@
 package br.com.braga.adb.model;
 
+import org.jetbrains.android.dom.xml.Intent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +37,7 @@ public class ActionFactory {
     public List<ElementChoose> getListAction() {
         ArrayList<ElementChoose> actionsCopy = new ArrayList<>();
         actionsCopy.addAll(actions);
+
         return actionsCopy;
     }
 }
