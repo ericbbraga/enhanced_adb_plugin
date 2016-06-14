@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -20,16 +22,19 @@ public class ExtraWindowDialog extends DialogWrapper {
     private JTextField nameText;
     private JTextField valueText;
 
+    private SelectAction selectAction;
+
     public ExtraWindowDialog(Project project, WindowExtraCallback callback) {
         super( project );
         this.callback = callback;
+        selectAction = new SelectAction();
         init();
     }
 
     @NotNull
     @Override
     protected Action[] createActions() {
-        return new Action[] {new SelectAction(), getCancelAction()};
+        return new Action[] {selectAction, getCancelAction()};
     }
 
     @Override
@@ -40,7 +45,6 @@ public class ExtraWindowDialog extends DialogWrapper {
 
         contentPane.setPreferredSize(new Dimension(300, 200));
 
-        // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onCancel();
@@ -50,6 +54,9 @@ public class ExtraWindowDialog extends DialogWrapper {
 
         typeCombobox.setModel(new ExtraColumnModel());
         typeCombobox.setSelectedIndex(0);
+
+        nameText.getDocument().addDocumentListener(new ExtraWindowDocumentListener());
+        valueText.getDocument().addDocumentListener(new ExtraWindowDocumentListener());
     }
 
     private void onOK() {
@@ -82,6 +89,38 @@ public class ExtraWindowDialog extends DialogWrapper {
         @Override
         protected void doAction(ActionEvent actionEvent) {
             onOK();
+        }
+
+        @Override
+        public boolean isEnabled() {
+            boolean nameEmpty = nameText.getText().isEmpty();
+            boolean valueEmpty = valueText.getText().isEmpty();
+            return !nameEmpty && !valueEmpty;
+        }
+    }
+
+    private class ExtraWindowDocumentListener implements DocumentListener {
+
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            enableSelectAction();
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            enableSelectAction();
+        }
+
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            enableSelectAction();
+        }
+
+        private void enableSelectAction() {
+            boolean nameEmpty = nameText.getText().isEmpty();
+            boolean valueEmpty = valueText.getText().isEmpty();
+
+            selectAction.setEnabled(!nameEmpty && !valueEmpty);
         }
     }
 }
