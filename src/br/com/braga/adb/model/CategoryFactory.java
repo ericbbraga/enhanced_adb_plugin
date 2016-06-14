@@ -7,7 +7,7 @@ import java.util.List;
  * Created by ericbraga on 01/03/16.
  */
 public class CategoryFactory {
-    private List<ElementChoose> categories;
+    private List<IntentFilterModel> categories;
 
     public CategoryFactory() {
         categories = new ArrayList<>();
@@ -28,8 +28,8 @@ public class CategoryFactory {
         categories.add(new IntentFilterModel("android.intent.category.APP_MARKET", "Intent.CATEGORY_APP_MARKET"));
     }
 
-    public List<ElementChoose> getList() {
-        ArrayList<ElementChoose> actionsCopy = new ArrayList<>();
+    public List<IntentFilterModel> getList() {
+        ArrayList<IntentFilterModel> actionsCopy = new ArrayList<>();
         actionsCopy.addAll(categories);
         return actionsCopy;
     }

@@ -7,7 +7,7 @@ import java.util.List;
  * Created by ericbraga on 01/03/16.
  */
 public class ActionBroadcastFactory {
-    private List<ElementChoose> actions;
+    private List<IntentFilterModel> actions;
 
     public ActionBroadcastFactory() {
         actions = new ArrayList<>();
@@ -28,8 +28,8 @@ public class ActionBroadcastFactory {
         actions.add(new IntentFilterModel("android.intent.action.SHUTDOWN", "Intent.ACTION_SHUTDOWN"));
     }
 
-    public List<ElementChoose> getListAction() {
-        ArrayList<ElementChoose> actionsCopy = new ArrayList<>();
+    public List<IntentFilterModel> getListAction() {
+        ArrayList<IntentFilterModel> actionsCopy = new ArrayList<>();
         actionsCopy.addAll(actions);
         return actionsCopy;
     }

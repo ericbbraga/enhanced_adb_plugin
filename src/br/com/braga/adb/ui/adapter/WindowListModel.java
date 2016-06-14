@@ -4,7 +4,7 @@ package br.com.braga.adb.ui.adapter;
  * Created by ericbraga on 01/03/16.
  */
 
-import br.com.braga.adb.model.ElementChoose;
+import br.com.braga.adb.model.IntentFilterModel;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
@@ -12,9 +12,9 @@ import java.util.List;
 
 public class WindowListModel implements ListModel<String> {
 
-    private List<ElementChoose> elements;
+    private List<IntentFilterModel> elements;
 
-    public WindowListModel(List<ElementChoose> elements) {
+    public WindowListModel(List<IntentFilterModel> elements) {
         this.elements = elements;
     }
 

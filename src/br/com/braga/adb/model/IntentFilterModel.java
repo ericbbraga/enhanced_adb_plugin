@@ -1,6 +1,6 @@
 package br.com.braga.adb.model;
 
-public class IntentFilterModel implements ElementChoose {
+public class IntentFilterModel {
     private String name;
 
     private String presentationName;
@@ -14,12 +14,10 @@ public class IntentFilterModel implements ElementChoose {
         return name;
     }
 
-    @Override
     public String getPresentationName() {
         return presentationName;
     }
 
-    @Override
     public String getValue() {
         return getName();
     }

@@ -34,8 +34,8 @@
 
   <actions>
     <!-- Add your actions here -->
-      <action id="br.com.braga.adb.actions.AdbDevicesAction" class="br.com.braga.adb.actions.AdbDevicesAction" text="AdbDevices"
-              description="List All Devices using Adb">
+      <action id="br.com.braga.adb.actions.AdbDevicesAction" class="br.com.braga.adb.actions.AdbDevicesAction" text="Enhanced Adb"
+              description="Adb Features to Android Studio" icon="/icons/broadcast.png">
           <add-to-group group-id="ToolsMenu" anchor="last"/>
       </action>
   </actions>

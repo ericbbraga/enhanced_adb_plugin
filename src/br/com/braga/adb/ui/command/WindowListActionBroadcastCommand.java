@@ -1,7 +1,7 @@
 package br.com.braga.adb.ui.command;
 
 import br.com.braga.adb.model.ActionBroadcastFactory;
-import br.com.braga.adb.ui.window.WindowListExtraDialog;
+import br.com.braga.adb.ui.window.WindowActionsDialog;
 import com.intellij.openapi.project.Project;
 
 /**
@@ -9,11 +9,11 @@ import com.intellij.openapi.project.Project;
  */
 public class WindowListActionBroadcastCommand extends AbstractCommand{
 
-    private WindowStrategy windowStrategy;
+    private WindowCallback windowCallback;
 
-    public WindowListActionBroadcastCommand(Project project, WindowStrategy callback) {
+    public WindowListActionBroadcastCommand(Project project, WindowCallback callback) {
         super(project);
-        this.windowStrategy = callback;
+        this.windowCallback = callback;
     }
 
     @Override
@@ -21,8 +21,8 @@ public class WindowListActionBroadcastCommand extends AbstractCommand{
         ActionBroadcastFactory factoryModel = new ActionBroadcastFactory();
 
         Project project = getProject();
-        WindowListExtraDialog dialog = new WindowListExtraDialog( project , factoryModel.getListAction(), "Broadcast Actions");
-        dialog.setCallback(windowStrategy);
+        WindowActionsDialog dialog = new WindowActionsDialog( project , factoryModel.getListAction(), "Broadcast Actions");
+        dialog.setCallback(windowCallback);
         dialog.show();
     }
 }

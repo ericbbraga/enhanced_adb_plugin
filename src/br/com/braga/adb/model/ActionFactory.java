@@ -1,13 +1,11 @@
 package br.com.braga.adb.model;
 
-import org.jetbrains.android.dom.xml.Intent;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class ActionFactory {
 
-    private List<ElementChoose> actions;
+    private List<IntentFilterModel> actions;
 
     public ActionFactory() {
         actions = new ArrayList<>();
@@ -34,8 +32,8 @@ public class ActionFactory {
         actions.add(new IntentFilterModel("android.intent.action.FACTORY_TEST", "Intent.ACTION_FACTORY_TEST"));
     }
 
-    public List<ElementChoose> getListAction() {
-        ArrayList<ElementChoose> actionsCopy = new ArrayList<>();
+    public List<IntentFilterModel> getListAction() {
+        ArrayList<IntentFilterModel> actionsCopy = new ArrayList<>();
         actionsCopy.addAll(actions);
 
         return actionsCopy;

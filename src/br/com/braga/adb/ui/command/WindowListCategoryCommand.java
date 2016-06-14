@@ -1,7 +1,7 @@
 package br.com.braga.adb.ui.command;
 
 import br.com.braga.adb.model.CategoryFactory;
-import br.com.braga.adb.ui.window.WindowListExtraDialog;
+import br.com.braga.adb.ui.window.WindowActionsDialog;
 import com.intellij.openapi.project.Project;
 
 /**
@@ -9,11 +9,11 @@ import com.intellij.openapi.project.Project;
  */
 public class WindowListCategoryCommand extends AbstractCommand {
 
-    private WindowStrategy windowStrategy;
+    private WindowCallback windowCallback;
 
-    public WindowListCategoryCommand(Project project, WindowStrategy callback) {
+    public WindowListCategoryCommand(Project project, WindowCallback callback) {
         super(project);
-        this.windowStrategy = callback;
+        this.windowCallback = callback;
     }
 
     @Override
@@ -21,8 +21,8 @@ public class WindowListCategoryCommand extends AbstractCommand {
         CategoryFactory factoryModel = new CategoryFactory();
 
         Project project = getProject();
-        WindowListExtraDialog dialog = new WindowListExtraDialog( project , factoryModel.getList(), "Category List" );
-        dialog.setCallback(windowStrategy);
+        WindowActionsDialog dialog = new WindowActionsDialog( project , factoryModel.getList(), "Category List" );
+        dialog.setCallback(windowCallback);
         dialog.show();
     }
 }
