@@ -1,11 +1,11 @@
 package br.com.braga.adb.model;
 
-public class IntentFilterModel {
+public class FilterModel {
     private String name;
 
     private String presentationName;
 
-    IntentFilterModel(String name, String presentationName) {
+    FilterModel(String name, String presentationName) {
         this.name = name;
         this.presentationName = presentationName;
     }

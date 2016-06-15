@@ -99,13 +99,14 @@
                         </constraints>
                         <properties/>
                       </component>
-                      <component id="a84cb" class="javax.swing.JButton" binding="button5" default-binding="true">
+                      <component id="a84cb" class="javax.swing.JButton" binding="listComponentButton">
                         <constraints>
                           <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                             <preferred-size width="2" height="2"/>
                           </grid>
                         </constraints>
                         <properties>
+                          <enabled value="false"/>
                           <text value="..."/>
                         </properties>
                       </component>
@@ -119,20 +120,22 @@
                       </component>
                       <scrollpane id="1351d">
                         <constraints>
-                          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
+                          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties/>
                         <border type="none"/>
                         <children>
                           <component id="c4ae2" class="javax.swing.JTable" binding="extraTable">
                             <constraints/>
-                            <properties/>
+                            <properties>
+                              <preferredScrollableViewportSize width="450" height="100"/>
+                            </properties>
                           </component>
                         </children>
                       </scrollpane>
                       <scrollpane id="ed2ef">
                         <constraints>
-                          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties/>
                         <border type="none"/>
@@ -140,6 +143,7 @@
                           <component id="47a05" class="javax.swing.JList" binding="flagList">
                             <constraints/>
                             <properties>
+                              <enabled value="true"/>
                               <model/>
                             </properties>
                           </component>
@@ -207,23 +211,12 @@
                           <text value="Add"/>
                         </properties>
                       </component>
-                      <component id="b3562" class="javax.swing.JTextArea" binding="messageTextArea">
-                        <constraints>
-                          <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                            <preferred-size width="150" height="100"/>
-                          </grid>
-                        </constraints>
-                        <properties>
-                          <editable value="false"/>
-                          <foreground color="-9756529"/>
-                        </properties>
-                      </component>
                       <component id="e33d4" class="javax.swing.JLabel">
                         <constraints>
                           <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
-                          <text value="Messages:"/>
+                          <text value="Log:"/>
                         </properties>
                       </component>
                       <component id="76a28" class="javax.swing.JLabel">
@@ -232,6 +225,31 @@
                         </constraints>
                         <properties>
                           <text value="Extra:"/>
+                        </properties>
+                      </component>
+                      <scrollpane id="d8c28">
+                        <constraints>
+                          <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="b3562" class="javax.swing.JTextArea" binding="messageTextArea">
+                            <constraints/>
+                            <properties>
+                              <editable value="false"/>
+                              <foreground color="-9756529"/>
+                              <lineWrap value="true"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </scrollpane>
+                      <component id="a4ace" class="javax.swing.JButton" binding="flagsButton">
+                        <constraints>
+                          <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="..."/>
                         </properties>
                       </component>
                     </children>

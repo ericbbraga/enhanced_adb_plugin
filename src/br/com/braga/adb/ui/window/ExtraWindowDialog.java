@@ -71,7 +71,6 @@ public class ExtraWindowDialog extends DialogWrapper {
     }
 
     private void onCancel() {
-// add your code here if necessary
         dispose();
     }
 

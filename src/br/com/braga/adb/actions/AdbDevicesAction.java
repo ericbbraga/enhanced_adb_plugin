@@ -15,47 +15,7 @@ public class AdbDevicesAction extends AnAction {
 
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
-
         final Project project = anActionEvent.getData(PlatformDataKeys.PROJECT);
         new IntentWidowCommand(project).execCommand();
-
-       /* final Project project = anActionEvent.getData(PlatformDataKeys.PROJECT);
-        AndroidDebugBridge bridge = AndroidSdkUtils.getDebugBridge(project);
-        if (bridge != null) {
-            IDevice[] devices = bridge.getDevices();
-
-            File adb = AndroidSdkUtils.getAdb(project);
-            String path = adb.getAbsolutePath();
-
-            if (devices.length > 0) {
-                try {
-                    devices[0].executeShellCommand("getprop", new AdbDevicesReceiver());
-
-                } catch (TimeoutException e) {
-                    e.printStackTrace();
-                } catch (AdbCommandRejectedException e) {
-                    e.printStackTrace();
-                } catch (ShellCommandUnresponsiveException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }*/
-    }
-
-    private class AdbDevicesReceiver extends MultiLineReceiver {
-
-        @Override
-        public void processNewLines(String[] strings) {
-            for (String s : strings) {
-                System.out.println(s);
-            }
-        }
-
-        @Override
-        public boolean isCancelled() {
-            return false;
-        }
     }
 }
