@@ -50,7 +50,7 @@ public class WindowFlagsDialog extends DialogWrapper {
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        flagList.setModel(new WindowFlagsModel(this.flags));
+        flagList.setModel(new WindowFlagsModel(flags));
     }
 
     @NotNull

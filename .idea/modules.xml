@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AdbPlusPlus.iml" filepath="$PROJECT_DIR$/AdbPlusPlus.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Enhanced Adb.iml" filepath="$PROJECT_DIR$/Enhanced Adb.iml" />
     </modules>
   </component>
 </project>

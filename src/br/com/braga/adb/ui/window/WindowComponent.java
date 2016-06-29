@@ -1,7 +1,8 @@
 package br.com.braga.adb.ui.window;
 
 import br.com.braga.adb.ui.adapter.WindowComponentListModel;
-import br.com.braga.adb.ui.command.WindowComponentCallback;
+import br.com.braga.adb.ui.command.WindowCallback;
+import br.com.braga.adb.ui.listener.DoubleClickMouseListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -11,13 +12,12 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WindowComponentDialog extends DialogWrapper {
+public class WindowComponent extends DialogWrapper {
+
     private JPanel contentPane;
     private JList componentList;
     private JTextField componentFilter;
@@ -26,10 +26,10 @@ public class WindowComponentDialog extends DialogWrapper {
 
     private List<String> components;
     private List<String> filteredComponents;
-    private WindowComponentCallback callback;
+    private WindowCallback callback;
     private WindowComponentListModel model;
 
-    public WindowComponentDialog(Project project, List<String> components, String title) {
+    public WindowComponent(Project project, List<String> components, String title) {
         super( project );
         this.components = new ArrayList<>(components);
         filteredComponents = new ArrayList<>(components);
@@ -37,7 +37,7 @@ public class WindowComponentDialog extends DialogWrapper {
         init();
     }
 
-    public void setCallback(WindowComponentCallback callback) {
+    public void setCallback(WindowCallback callback) {
         this.callback = callback;
     }
 
@@ -60,22 +60,29 @@ public class WindowComponentDialog extends DialogWrapper {
         componentFilter.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                filtercomponents();
+                filter();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                filtercomponents();
+                filter();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                filtercomponents();
+                filter();
+            }
+        });
+
+        componentList.addMouseListener(new DoubleClickMouseListener() {
+            @Override
+            public void triggerEvent() {
+                selectElement();
             }
         });
     }
 
-    private void filtercomponents() {
+    private void filter() {
 
         String filterText = componentFilter.getText();
 
@@ -86,11 +93,10 @@ public class WindowComponentDialog extends DialogWrapper {
             filteredComponents.clear();
 
             for (String component : components) {
-                if (component.contains(filterText)) {
+                if (component.toLowerCase().contains(filterText.toLowerCase())) {
                     filteredComponents.add(component);
                 }
             }
-
         }
 
         model.update(filteredComponents);
@@ -110,12 +116,16 @@ public class WindowComponentDialog extends DialogWrapper {
 
         @Override
         protected void doAction(ActionEvent actionEvent) {
-            if (callback != null) {
-                callback.handleReturn((String) componentList.getSelectedValue());
-            }
-
-            dispose();
+            selectElement();
         }
+    }
+
+    private void selectElement() {
+        if (callback != null) {
+            callback.handleReturn((String) componentList.getSelectedValue());
+        }
+
+        dispose();
     }
 
     private void onCancel() {

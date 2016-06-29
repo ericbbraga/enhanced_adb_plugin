@@ -7,28 +7,28 @@ import java.util.List;
  * Created by ericbraga on 01/03/16.
  */
 public class CategoryFactory {
-    private List<FilterModel> categories;
+    private List<String> categories;
 
     public CategoryFactory() {
         categories = new ArrayList<>();
 
-        categories.add(new FilterModel("android.intent.category.DEFAULT", "Intent.CATEGORY_DEFAULT"));
-        categories.add(new FilterModel("android.intent.category.BROWSABLE", "Intent.CATEGORY_BROWSABLE"));
-        categories.add(new FilterModel("android.intent.category.TAB", "Intent.CATEGORY_TAB"));
-        categories.add(new FilterModel("android.intent.category.ALTERNATIVE", "Intent.CATEGORY_ALTERNATIVE"));
-        categories.add(new FilterModel("android.intent.category.LAUNCHER", "Intent.CATEGORY_LAUNCHER"));
-        categories.add(new FilterModel("android.intent.category.INFO", "Intent.CATEGORY_INFO"));
-        categories.add(new FilterModel("android.intent.category.HOME", "Intent.CATEGORY_HOME"));
-        categories.add(new FilterModel("android.intent.category.PREFERENCE", "Intent.CATEGORY_PREFERENCE"));
-        categories.add(new FilterModel("android.intent.category.TEST", "Intent.CATEGORY_TEST"));
-        categories.add(new FilterModel("android.intent.category.CAR_DOCK", "Intent.CATEGORY_CAR_DOCK"));
-        categories.add(new FilterModel("android.intent.category.DESK_DOCK", "Intent.CATEGORY_DESK_DOCK"));
-        categories.add(new FilterModel("android.intent.category.HE_DESK_DOCK", "Intent.CATEGORY_HE_DESK_DOCK"));
-        categories.add(new FilterModel("android.intent.category.CAR_MODE", "Intent.CATEGORY_CAR_MODE"));
-        categories.add(new FilterModel("android.intent.category.APP_MARKET", "Intent.CATEGORY_APP_MARKET"));
+        categories.add("android.intent.category.DEFAULT");
+        categories.add("android.intent.category.BROWSABLE");
+        categories.add("android.intent.category.TAB");
+        categories.add("android.intent.category.ALTERNATIVE");
+        categories.add("android.intent.category.LAUNCHER");
+        categories.add("android.intent.category.INFO");
+        categories.add("android.intent.category.HOME");
+        categories.add("android.intent.category.PREFERENCE");
+        categories.add("android.intent.category.TEST");
+        categories.add("android.intent.category.CAR_DOCK");
+        categories.add("android.intent.category.DESK_DOCK");
+        categories.add("android.intent.category.HE_DESK_DOCK");
+        categories.add("android.intent.category.CAR_MODE");
+        categories.add("android.intent.category.APP_MARKET");
     }
 
-    public List<FilterModel> getList() {
+    public List<String> getList() {
         return new ArrayList<>(categories);
     }
 }

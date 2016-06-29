@@ -9,6 +9,7 @@ import br.com.braga.adb.ui.adapter.ExtraTableModel;
 import br.com.braga.adb.ui.adapter.IntentTypeModel;
 import br.com.braga.adb.ui.adapter.WindowFlagsModel;
 import br.com.braga.adb.ui.command.*;
+import br.com.braga.adb.ui.listener.TextFieldChangeListener;
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
 import com.intellij.openapi.project.Project;
@@ -17,8 +18,6 @@ import org.jetbrains.android.sdk.AndroidSdkUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,11 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class IntentWindowActionDialog extends DialogWrapper implements AndroidDebugBridge.IDeviceChangeListener, WindowExtraCallback, SendAdbCommand.SendIntentCallback, WindowListFlagsCallback {
-
-    private static final Color NORMAL_MESSAGE_COLOR = Color.black;
-
-    private static final Color ERROR_MESSAGE_COLOR  = Color.getHSBColor(107,32,143);
+public class IntentWindowActionDialog extends DialogWrapper implements AndroidDebugBridge.IDeviceChangeListener, WindowExtraCallback{
 
     private final Project project;
     private JPanel contentPane;
@@ -47,10 +42,10 @@ public class IntentWindowActionDialog extends DialogWrapper implements AndroidDe
     private JComboBox typeIntentCombobox;
     private JComboBox deviceCombobox;
     private JButton addButton;
-    private JTextArea messageTextArea;
     private JButton flagsButton;
-    private FilterModel actionChosen;
-    private FilterModel categoryChoose;
+    private JButton clearLogButton;
+    private JTextArea logTextArea;
+    private JButton sendIntentButton;
 
     private List<IDevice> devices;
     private final AndroidDebugBridge bridge;
@@ -59,6 +54,8 @@ public class IntentWindowActionDialog extends DialogWrapper implements AndroidDe
 
     private List<FilterModel> flagsSelected;
     private WindowFlagsModel flagModel;
+
+    private AdbComboModel comboboxModel;
 
     public IntentWindowActionDialog(Project project) {
         super(project);
@@ -69,8 +66,8 @@ public class IntentWindowActionDialog extends DialogWrapper implements AndroidDe
         bridge = AndroidSdkUtils.getDebugBridge(project);
         bridge.addDeviceChangeListener(this);
 
-        updateDevices();
         init();
+        updateDevices();
     }
 
     @Override
@@ -80,7 +77,11 @@ public class IntentWindowActionDialog extends DialogWrapper implements AndroidDe
         setModal(true);
         setResizable(true);
         setTitle("Enhanced Adb");
-        contentPane.setPreferredSize(new Dimension(640, 480));
+
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+        contentPane.setPreferredSize(new Dimension(640, screenSize.height));
 
         listActionbutton.addActionListener(new ActionListener() {
             @Override
@@ -113,7 +114,9 @@ public class IntentWindowActionDialog extends DialogWrapper implements AndroidDe
         typeIntentCombobox.setModel(new IntentTypeModel());
         typeIntentCombobox.setSelectedIndex(0);
 
-        deviceCombobox.setModel(new AdbComboModel(devices));
+        comboboxModel = new AdbComboModel(devices);
+
+        deviceCombobox.setModel(comboboxModel);
         deviceCombobox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -129,19 +132,9 @@ public class IntentWindowActionDialog extends DialogWrapper implements AndroidDe
             }
         });
 
-        actionTextField.getDocument().addDocumentListener(new DocumentListener() {
+        actionTextField.getDocument().addDocumentListener(new TextFieldChangeListener() {
             @Override
-            public void insertUpdate(DocumentEvent e) {
-                enableComponentButton();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                enableComponentButton();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
+            public void triggerEvent() {
                 enableComponentButton();
             }
         });
@@ -155,10 +148,39 @@ public class IntentWindowActionDialog extends DialogWrapper implements AndroidDe
 
         flagModel = new WindowFlagsModel(flagsSelected);
         flagList.setModel(flagModel);
+
+        clearLogButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                resetMessageTextArea();
+            }
+        });
+
+        sendIntentButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sendIntent();
+            }
+        });
     }
 
     private void openWindowListFlags() {
-        WindowListFlags window = new WindowListFlags(project, this);
+
+        WindowListFlagsCallback callback = new WindowListFlagsCallback() {
+            @Override
+            public void handleReturn(List<FilterModel> flags) {
+                if (flags != null && flags.size() > 0) {
+                    flagsSelected.clear();
+                    flagsSelected.addAll(flags);
+
+                    flagModel.removeAll();
+                    flagModel.addElements(flagsSelected);
+                    flagList.updateUI();
+                }
+            }
+        };
+
+        WindowListFlags window = new WindowListFlags(project, callback);
         window.execCommand();
     }
 
@@ -171,22 +193,46 @@ public class IntentWindowActionDialog extends DialogWrapper implements AndroidDe
         int index = deviceCombobox.getSelectedIndex();
         if (index >= 0 && index < devices.size()) {
             device = devices.get(index);
+
             enableComponentButton();
+            enableActionButton();
+            enableCategoryButton();
+
+        } else {
+            disableActionButton();
+            disableCategoryButton();
         }
+    }
+
+    private void disableActionButton() {
+        listActionbutton.setEnabled(false);
+    }
+
+    private void disableCategoryButton() {
+        listCategoryButton.setEnabled(false);
+    }
+
+    private void enableActionButton() {
+        listActionbutton.setEnabled(true);
+    }
+
+    private void enableCategoryButton() {
+        listCategoryButton.setEnabled(true);
     }
 
     private void windowListAction() {
         IntentType intentType = (IntentType) typeIntentCombobox.getSelectedItem();
         switch (intentType) {
             case ACTIVITY:
-                openWindowListAction();
+                openWindowListActivity();
                 break;
 
             case BROADCAST:
-                openWindowListBroadcastAction();
+                openWindowListBroadcast();
                 break;
 
             case SERVICE:
+                openWindowServiceList();
                 break;
 
             default:
@@ -194,57 +240,77 @@ public class IntentWindowActionDialog extends DialogWrapper implements AndroidDe
         }
     }
 
-    private void openWindowListAction() {
+    private void openWindowServiceList() {
         WindowCallback callback = new WindowCallback() {
             @Override
-            public void handleReturn(FilterModel element) {
-                actionChosen = element;
-                actionTextField.setText(element.getPresentationName());
+            public void handleReturn(String element) {
+                actionTextField.setText(element);
             }
         };
 
-        new WindowListActionCommand(project, callback).execCommand();
+        WindowListServiceCommand windowListServiceCommand = new WindowListServiceCommand(project, device);
+        windowListServiceCommand.setWindowCallback(callback);
+        windowListServiceCommand.execCommand();
     }
 
-    private void openWindowListBroadcastAction() {
-
+    private void openWindowListActivity() {
         WindowCallback callback = new WindowCallback() {
             @Override
-            public void handleReturn(FilterModel element) {
-                actionChosen = element;
-                actionTextField.setText(element.getPresentationName());
+            public void handleReturn(String element) {
+                actionTextField.setText(element);
             }
         };
 
-        new WindowListActionBroadcastCommand(project, callback).execCommand();
+        WindowListIntentCommand windowListAction = new WindowListIntentCommand(project, device);
+        windowListAction.setWindowCallback(callback);
+        windowListAction.execCommand();
+    }
+
+    private void openWindowListBroadcast() {
+
+        WindowCallback callback = new WindowCallback() {
+            @Override
+            public void handleReturn(String element) {
+                actionTextField.setText(element);
+            }
+        };
+
+        WindowListBroadcastCommand windowListBroadcastCommand = new WindowListBroadcastCommand(project, device);
+        windowListBroadcastCommand.setWindowCallback(callback);
+        windowListBroadcastCommand.execCommand();
     }
 
     private void openWindowListCategory() {
 
         WindowCallback callback = new WindowCallback() {
             @Override
-            public void handleReturn(FilterModel element) {
-                categoryChoose = element;
-                categoryTextField.setText(element.getPresentationName());
+            public void handleReturn(String element) {
+                categoryTextField.setText(element);
             }
         };
 
-        new WindowListCategoryCommand(project, callback).execCommand();
+        WindowListCategoryCommand windowListCategoryCommand = new WindowListCategoryCommand(project);
+        windowListCategoryCommand.setWindowCallback(callback);
+        windowListCategoryCommand.execCommand();
     }
 
     private void openWindowListComponent() {
 
-        WindowComponentCallback callback = new WindowComponentCallback() {
+        WindowCallback callback = new WindowCallback() {
             @Override
             public void handleReturn(String componentName) {
                 componentTextField.setText(componentName);
             }
         };
 
-        new WindowListComponent(project, device, actionChosen.getValue(), callback).execCommand();
+        String action = actionTextField.getText();
+
+        WindowListComponent windowListComponent = new WindowListComponent(project, device, action);
+        windowListComponent.setCallback(callback);
+        windowListComponent.execCommand();
     }
 
-    private void onOK() {
+    private void sendIntent() {
 
         if (device != null && device.isOnline()) {
             ExtraTableModel extraModel = (ExtraTableModel) extraTable.getModel();
@@ -257,25 +323,42 @@ public class IntentWindowActionDialog extends DialogWrapper implements AndroidDe
 
             intentString.setExtraComponent(extraModel);
 
+            SendAdbCommand.SendIntentCallback sendIntentCallback = new SendAdbCommand.SendIntentCallback() {
+                @Override
+                public void handleError(Exception e) {
+                    appendStringIntoMessageTextArea(e.getMessage());
+                }
+
+                @Override
+                public void handleResult(boolean worked, String[] messageReturn) {
+
+                    for (String line : messageReturn) {
+                        appendStringIntoMessageTextArea(line);
+                    }
+                }
+
+                @Override
+                public void onFinishedProcess() {
+
+                }
+            };
+
             if (intentString.isActionConfigured()) {
                 SendAdbCommand command = new SendAdbCommand(project, device, intentString.getFinalIntent());
-                command.setCallback(this);
+                command.setCallback(sendIntentCallback);
                 command.execCommand();
             } else {
-                setMessageTextArea("Action should be configured");
+
+                appendStringIntoMessageTextArea("Action should be configured");
             }
 
         } else {
-            setMessageTextArea("Should select a online device");
+            appendStringIntoMessageTextArea("Should select a online device");
         }
     }
 
-    private void setMessageTextArea(String message) {
-        appendStringIntoMessageTextArea(message);
-    }
-
     private void resetMessageTextArea() {
-        messageTextArea.setText("");
+        logTextArea.setText("");
     }
 
     private void onCancel() {
@@ -292,6 +375,9 @@ public class IntentWindowActionDialog extends DialogWrapper implements AndroidDe
         if (bridge != null) {
             devices.clear();
             devices.addAll( Arrays.asList(bridge.getDevices()) );
+
+            comboboxModel.updateDeviceList(devices);
+            deviceCombobox.updateUI();
         }
     }
 
@@ -301,7 +387,7 @@ public class IntentWindowActionDialog extends DialogWrapper implements AndroidDe
         DialogWrapperAction sendActionButton = new DialogWrapperAction("Send") {
             @Override
             protected void doAction(ActionEvent actionEvent) {
-                onOK();
+                sendIntent();
             }
         };
 
@@ -312,7 +398,7 @@ public class IntentWindowActionDialog extends DialogWrapper implements AndroidDe
             }
         };
 
-        return new Action[] { sendActionButton, cancelActionButton };
+        return new Action[] { };
     }
 
 
@@ -339,44 +425,7 @@ public class IntentWindowActionDialog extends DialogWrapper implements AndroidDe
         }
     }
 
-    @Override
-    public void handleError(Exception e) {
-
-    }
-
-    @Override
-    public void handleResult(boolean worked, String[] messageReturn) {
-
-        changeLogMessage(worked);
-
-        for (String line : messageReturn) {
-            appendStringIntoMessageTextArea(line);
-        }
-    }
-
     private void appendStringIntoMessageTextArea(String line) {
-        messageTextArea.append(String.format("%s\n", line));
-    }
-
-    private void changeLogMessage(boolean worked) {
-        Color color = worked ? NORMAL_MESSAGE_COLOR : ERROR_MESSAGE_COLOR;
-        messageTextArea.setForeground(color);
-    }
-
-    @Override
-    public void onFinishedProcess() {
-
-    }
-
-    @Override
-    public void handleReturn(List<FilterModel> flags) {
-        if (flags != null && flags.size() > 0) {
-            flagsSelected.clear();
-            flagsSelected.addAll(flags);
-
-            flagModel.removeAll();
-            flagModel.addElements(flagsSelected);
-            flagList.updateUI();
-        }
+        logTextArea.append(String.format("%s\n", line));
     }
 }

@@ -1,6 +1,6 @@
 package br.com.braga.adb.ui.command;
 
-import br.com.braga.adb.ui.window.WindowComponentDialog;
+import br.com.braga.adb.ui.window.WindowComponent;
 import com.android.ddmlib.IDevice;
 import com.intellij.openapi.project.Project;
 
@@ -18,7 +18,7 @@ public class WindowListComponent extends AbstractCommand implements SendAdbComma
 
     private static final String COMPONENT_ADB = "dumpsys package r";
 
-    private final WindowComponentCallback callback;
+    private WindowCallback callback;
 
     private String action;
 
@@ -28,11 +28,10 @@ public class WindowListComponent extends AbstractCommand implements SendAdbComma
 
     List<String> components;
 
-    public WindowListComponent(Project project, IDevice device, String action, WindowComponentCallback callback) {
+    public WindowListComponent(Project project, IDevice device, String action) {
         super(project);
         this.device = device;
         this.action = action;
-        this.callback = callback;
         foundAction = false;
         components = new ArrayList<>();
 
@@ -61,7 +60,6 @@ public class WindowListComponent extends AbstractCommand implements SendAdbComma
                 if (lines.contains(this.action)) {
                     foundAction = true;
                     continue;
-
                 }
 
                 if (foundAction) {
@@ -77,16 +75,20 @@ public class WindowListComponent extends AbstractCommand implements SendAdbComma
                     }
                 }
             }
+
         }
     }
 
     @Override
     public void onFinishedProcess() {
         Project project = getProject();
-        System.out.println(components.size());
 
-        WindowComponentDialog dialog = new WindowComponentDialog(project , components, String.format("Component List for %s", action));
+        WindowComponent dialog = new WindowComponent(project , components, String.format("Component List for %s", action));
         dialog.setCallback(callback);
         dialog.show();
+    }
+
+    public void setCallback(WindowCallback callback) {
+        this.callback = callback;
     }
 }

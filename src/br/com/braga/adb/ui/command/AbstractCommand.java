@@ -9,7 +9,6 @@ public abstract class AbstractCommand implements Command {
 
     private Project project;
 
-
     public AbstractCommand(Project project) {
         this.project = project;
     }

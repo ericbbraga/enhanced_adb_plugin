@@ -5,8 +5,9 @@
   <vendor email="ericbraga25@gmail.com" url="http://www.yourcompany.com"></vendor>
 
   <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
+       The ads command has some features those are not implemented by Android Studio
+       (e.g.: get a list of all device`s services, send commands to simulate battery change and so).
+       For that reason, the Enhanced Adb plugin is a important wrapper that can be a helper for the Android Developers
     ]]></description>
 
   <change-notes><![CDATA[

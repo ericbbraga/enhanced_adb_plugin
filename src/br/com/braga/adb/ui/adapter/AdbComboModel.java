@@ -16,7 +16,13 @@ public class AdbComboModel extends AbstractListModel implements ComboBoxModel {
     private List<IDevice> devices = new ArrayList<>();
 
     public AdbComboModel(List<IDevice> deviceList) {
+        updateDeviceList(deviceList);
+    }
+
+    public void updateDeviceList(List<IDevice> deviceList) {
+        devices.clear();
         devices.addAll(deviceList);
+        this.fireContentsChanged(this, 0, this.devices.size());
     }
 
     @Override
