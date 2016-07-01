@@ -1,0 +1,4 @@
+# Enhanced Adb Plugin
+Do you know how much boilerplate code you should write to select one simple row in a content provider? Or remember how much time and effort did you waste trying to get the current resumed activity? Maybe you can remember how many times you created a simple Android project with purpose to start a service that you created (and it was so boring).
+
+Android has a powerful toolbox for helping you with those tasks. Using adb (Android Debug Bridge) you can start a “conversation” with you emulator or real device and you can send commands to execute a lot of important tasks. However, those commands have a lot of options and can be difficult to remember. For that reason, Enhanced Adb Plugin was created. It's a wrapper for those commands and you are able to execute them with you Android Studio IDE.
